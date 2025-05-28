@@ -1,0 +1,42 @@
+# Arquivos binários do Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Diretório de builds locais
+/bin/
+/build/
+
+# Cache do Go
+/pkg/
+**/vendor/
+
+# GoLand, VSCode e outras IDEs/editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Arquivos de testes
+*.coverprofile
+*.log
+
+# Arquivos de configuração locais
+.env
+.env.*
+config.local.*
+*.local.json
+
+# Módulos baixados (se não estiver usando vendoring)
+go.sum
+
+# Docker
+docker-compose.override.yml
+
+# Arquivos temporários
+tmp/
+*.tmp
