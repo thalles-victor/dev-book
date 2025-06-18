@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api/src/config"
 	"api/src/router"
 	"fmt"
 	"log"
@@ -8,10 +9,12 @@ import (
 )
 
 func main() {
+	config.ChangeEnvironment()
+	fmt.Println(config.Port)
 	fmt.Println("Running api")
 
 	r := router.Generate()
 
-	fmt.Println("Serve running at http://localhost:5000")
-	log.Fatal(http.ListenAndServe(":5000", r))
+	fmt.Println(fmt.Sprintf("Server running on port %d", config.Port))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), r))
 }
