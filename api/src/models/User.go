@@ -2,8 +2,11 @@ package models
 
 import (
 	"errors"
+	"log"
 	"strings"
 	"time"
+
+	"github.com/badoux/checkmail"
 )
 
 // User represent a user in social network
@@ -17,8 +20,9 @@ type User struct {
 }
 
 // Prepare call validate and  format
-func (user *User) Prepare() error {
-	if err := user.validate(); err != nil {
+func (user *User) Prepare(step string) error {
+
+	if err := user.validate(step); err != nil {
 		return err
 	}
 
@@ -26,21 +30,29 @@ func (user *User) Prepare() error {
 	return nil
 }
 
-func (user *User) validate() error {
+func (user *User) validate(step string) error {
+	if step != "register" && step != "update" {
+		log.Fatal("step must be a string or update")
+	}
+
 	if user.Name == "" {
-		return errors.New("O nome é obrigatorio e não pode estar em branco")
+		return errors.New("O name é obrigatorio e não pode estar em branco")
 	}
 
 	if user.Nick == "" {
-		return errors.New("O nome é obrigatorio e não pode estar em branco")
+		return errors.New("O nick é obrigatorio e não pode estar em branco")
 	}
 
 	if user.Email == "" {
-		return errors.New("O nome é obrigatorio e não pode estar em branco")
+		return errors.New("O email é obrigatorio e não pode estar em branco")
 	}
 
-	if user.Password == "" {
-		return errors.New("O nome é obrigatorio e não pode estar em branco")
+	if err := checkmail.ValidateFormat(user.Email); err != nil {
+		return errors.New("O email inserido é inválido")
+	}
+
+	if step == "register" && user.Password == "" {
+		return errors.New("O password é obrigatorio e não pode estar em branco")
 	}
 
 	return nil
