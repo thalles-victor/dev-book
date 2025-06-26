@@ -12,6 +12,8 @@ import (
 var (
 	DatabaseConnection = ""
 	Port               = 0
+	//Chave usada para assinar o toke
+	SecretKey []byte
 )
 
 func ChangeEnvironment() {
@@ -25,6 +27,6 @@ func ChangeEnvironment() {
 	if err != nil {
 		Port = 8000
 	}
-
 	DatabaseConnection = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
+	SecretKey = []byte(os.Getenv("JWT_SECRET"))
 }

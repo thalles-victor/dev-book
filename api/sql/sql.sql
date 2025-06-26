@@ -12,3 +12,5 @@ CREATE TABLE users (
     password varchar(50) not null,
     createdAt timestamp default current_timestamp()
 ) ENGINE=INNODB;
+
+ALTER TABLE users ALTER COLUMN password TYPE VARCHAR(255);
