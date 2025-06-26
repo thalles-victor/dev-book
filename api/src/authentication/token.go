@@ -2,6 +2,10 @@ package authentication
 
 import (
 	"api/src/config"
+	"errors"
+	"fmt"
+	"net/http"
+	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -18,4 +22,42 @@ func GenerateToken(userID interface{}) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, permissions)
 
 	return token.SignedString(config.SecretKey)
+}
+
+// Check is token passed on request is valid
+func ValidateToken(r *http.Request) error {
+	tokenString, err := extractToken(r)
+	if err != nil {
+		return err
+	}
+
+	token, err := jwt.Parse(tokenString, returnVerificationKey)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return nil
+	}
+
+	return errors.New("invalid token")
+}
+
+// Extract token from bearer token
+func extractToken(r *http.Request) (string, error) {
+	tokenWithBearer := strings.Split(r.Header.Get("Authorization"), " ")
+
+	if len(tokenWithBearer) == 2 {
+		return tokenWithBearer[1], nil
+	}
+
+	return "", errors.New("invalid token, require Bearer prefix")
+}
+
+func returnVerificationKey(token *jwt.Token) (interface{}, error) {
+	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		return nil, fmt.Errorf("method of subscription inexpected %v", token.Header["alg"])
+	}
+
+	return config.SecretKey, nil
 }

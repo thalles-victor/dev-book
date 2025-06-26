@@ -16,22 +16,22 @@ var userRouters = []Rote{
 		URI:         "/users",
 		Method:      http.MethodGet,
 		Function:    controllers.SearchUsers,
-		RequireAuth: false,
+		RequireAuth: true,
 	}, {
 		URI:         "/users/{userId}",
 		Method:      http.MethodGet,
 		Function:    controllers.SearchUser,
-		RequireAuth: false,
+		RequireAuth: true,
 	}, {
 		URI:         "/users/{userId}",
 		Method:      http.MethodPut,
 		Function:    controllers.UpdateUser,
-		RequireAuth: false,
+		RequireAuth: true,
 	},
 	{
 		URI:         "/users/{userId}",
 		Method:      http.MethodDelete,
 		Function:    controllers.DeleteUser,
-		RequireAuth: false,
+		RequireAuth: true,
 	},
 }
