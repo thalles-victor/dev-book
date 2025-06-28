@@ -3,6 +3,7 @@ package repositories
 import (
 	"api/src/models"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -102,13 +103,14 @@ func (repository Users) SearchByID(userID uint64) (models.User, error) {
 
 // Update user informations
 func (repository Users) Update(userId uint64, user models.User) error {
-	statement, err := repository.db.Prepare(`UPDATE users SET name = ?, nick = ?, email = ? WHERE id = ?`)
+	statement, err := repository.db.Prepare(`UPDATE users SET name = ?, nick = ? WHERE id = ?`)
 	if err != nil {
 		return err
 	}
 	defer statement.Close()
 
-	if _, err = statement.Exec(user.Name, user.Nick, user.Email, user.ID); err != nil {
+	fmt.Printf("user id is %d", userId)
+	if _, err = statement.Exec(user.Name, user.Nick, userId); err != nil {
 		return err
 	}
 
@@ -131,18 +133,16 @@ func (repository Users) DeleteUser(userId uint64) error {
 
 // Search user by email and return id and password with hash
 func (repository Users) SearchUserByEmail(email string) (models.User, error) {
-	row, err := repository.db.Query("SELECT id, password FROM users WHERE email = ?", email)
-	if err != nil {
-		return models.User{}, err
-	}
-	defer row.Close()
-
 	var user models.User
 
-	if row.Next() {
-		if err = row.Scan(&user.ID, &user.Password); err != nil {
-			return models.User{}, nil
+	err := repository.db.QueryRow("SELECT id, password FROM users WHERE email = ?", email).Scan(&user.ID, &user.Password)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.User{}, fmt.Errorf("user not found")
 		}
+
+		return models.User{}, err
 	}
 
 	return user, nil

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"api/src/authentication"
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
@@ -100,10 +101,9 @@ func SearchUser(w http.ResponseWriter, r *http.Request) {
 
 // Update user
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	parameters := mux.Vars(r)
-	userID, err := strconv.ParseUint(parameters["userId"], 10, 64)
+	userIDFromToken, err := authentication.ExtractUserID(r)
 	if err != nil {
-		responses.Error(w, http.StatusBadRequest, err)
+		responses.Error(w, http.StatusUnauthorized, err)
 		return
 	}
 
@@ -132,7 +132,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repository := repositories.NewRepositoryUser(db)
-	if err = repository.Update(userID, user); err != nil {
+	if err = repository.Update(userIDFromToken, user); err != nil {
 		responses.Error(w, http.StatusInternalServerError, err)
 		return
 	}
@@ -142,11 +142,10 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 // Delete user
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	parameters := mux.Vars(r)
-
-	userID, err := strconv.ParseUint(parameters["userId"], 10, 64)
+	userIDFromToken, err := authentication.ExtractUserID(r)
 	if err != nil {
-		responses.Error(w, http.StatusBadRequest, err)
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
 	}
 
 	db, err := database.Connect()
@@ -157,7 +156,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repository := repositories.NewRepositoryUser(db)
-	if err = repository.DeleteUser(userID); err != nil {
+	if err = repository.DeleteUser(userIDFromToken); err != nil {
 		responses.Error(w, http.StatusInternalServerError, err)
 		return
 	}

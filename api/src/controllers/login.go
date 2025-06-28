@@ -8,6 +8,7 @@ import (
 	"api/src/responses"
 	"api/src/security"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -35,8 +36,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	repositories := repositories.NewRepositoryUser(db)
 	userSaved, err := repositories.SearchUserByEmail(user.Email)
+	fmt.Println(userSaved)
 	if err != nil {
-		responses.Error(w, http.StatusInternalServerError, err)
+		responses.Error(w, http.StatusUnauthorized, err)
 		return
 	}
 
