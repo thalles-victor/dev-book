@@ -14,3 +14,13 @@ CREATE TABLE users (
 ) ENGINE=INNODB;
 
 ALTER TABLE users ALTER COLUMN password TYPE VARCHAR(255);
+
+CREATE TABLE subscriptions(
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+
+    follower_id INT NOT NULL,
+    FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
+
+    PRIMARY KEY(user_id, follower_id)
+) ENGINE=INNODB;
