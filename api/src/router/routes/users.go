@@ -52,4 +52,10 @@ var userRouters = []Rote{
 		Function:    controllers.SearchFollowers,
 		RequireAuth: true,
 	},
+	{
+		URI:         "/users/{userId}/following",
+		Method:      http.MethodGet,
+		Function:    controllers.SearchFollowing,
+		RequireAuth: true,
+	},
 }
