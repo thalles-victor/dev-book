@@ -20,6 +20,7 @@ type Rote struct {
 func Configure(r *mux.Router) *mux.Router {
 	routes := userRouters
 	routes = append(routes, loginRoute)
+	routes = append(routes, routesPublications...)
 
 	for _, route := range routes {
 		routeLog := fmt.Sprintf("mapped -> uri: %s  method: %s auth: %t", route.URI, route.Method, route.RequireAuth)

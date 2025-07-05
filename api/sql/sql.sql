@@ -24,3 +24,13 @@ CREATE TABLE subscriptions(
 
     PRIMARY KEY(user_id, follower_id)
 ) ENGINE=INNODB;
+
+CREATE TABLE publication(
+    id INT auto_increment PRIMARY KEY,
+    title VARCHAR(120) NOT NULL,
+    content VARCHAR(300),
+    author_id INT NOT NULL,
+    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
+    likes INT DEFAULT 0,
+    createdAt TIMESTAMP DEFAULT current_timestamp
+) ENGINE=INNODB;
