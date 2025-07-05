@@ -58,4 +58,10 @@ var userRouters = []Rote{
 		Function:    controllers.SearchFollowing,
 		RequireAuth: true,
 	},
+	{
+		URL: "/users/update-password",
+		Method: http.MethodPost,
+		Function: controllers.,
+		RequireAuth: true,
+	}
 }
