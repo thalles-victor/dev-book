@@ -59,9 +59,9 @@ var userRouters = []Rote{
 		RequireAuth: true,
 	},
 	{
-		URL: "/users/update-password",
-		Method: http.MethodPost,
-		Function: controllers.,
+		URI:         "/users/update-password",
+		Method:      http.MethodPost,
+		Function:    controllers.UpdatePassword,
 		RequireAuth: true,
-	}
+	},
 }
