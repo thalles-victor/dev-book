@@ -9,6 +9,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func CreatePublication(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +35,11 @@ func CreatePublication(w http.ResponseWriter, r *http.Request) {
 
 	pub.AuthorID = userId
 
+	if err := pub.Prepare(); err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
 	db, err := database.Connect()
 	if err != nil {
 		responses.Error(w, http.StatusInternalServerError, err)
@@ -49,7 +57,30 @@ func CreatePublication(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusCreated, pub)
 }
 
-func SarchPublications(w http.ResponseWriter, r *http.Request) {}
+func SearchPublications(w http.ResponseWriter, r *http.Request) {
+	parameters := mux.Vars(r)
+	pubID, err := strconv.ParseUint(parameters["pubID"], 10, 64)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewRepositoryPublication(db)
+	pub, err := repository.GetById(pubID)
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, pub)
+}
 
 func SearchPublication(w http.ResponseWriter, r *http.Request) {}
 
