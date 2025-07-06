@@ -82,7 +82,28 @@ func SearchPublications(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, pub)
 }
 
-func SearchPublication(w http.ResponseWriter, r *http.Request) {}
+func SearchPublication(w http.ResponseWriter, r *http.Request) {
+	userID, err := authentication.ExtractUserID(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+	}
+	defer db.Close()
+
+	repository := repositories.NewRepositoryPublication(db)
+	pubs, err := repository.Search(userID)
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, pubs)
+}
 
 func UpdatePublication(w http.ResponseWriter, r *http.Request) {}
 

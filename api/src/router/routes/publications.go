@@ -14,17 +14,10 @@ var routesPublications = []Rote{
 	},
 
 	{
-		URI:         "/publications/{pubID}",
+		URI:         "/publications",
 		Method:      http.MethodGet,
-		Function:    controllers.SearchPublications,
-		RequireAuth: false,
-	},
-
-	{
-		URI:         "/publications/{pubID}",
-		Method:      http.MethodPost,
 		Function:    controllers.SearchPublication,
-		RequireAuth: false,
+		RequireAuth: true,
 	},
 
 	{
