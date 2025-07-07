@@ -120,3 +120,18 @@ func (repository Publications) Update(pubID uint64, pub models.Publication) erro
 
 	return nil
 }
+
+func (repository Publications) DeleteById(pubID uint64) error {
+	statement, err := repository.db.Prepare("DELETE FROM publication WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(pubID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -8,6 +8,7 @@ import (
 	"api/src/responses"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -166,4 +167,45 @@ func UpdatePublication(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusNoContent, nil)
 }
 
-func DeletePublication(w http.ResponseWriter, r *http.Request) {}
+func DeletePublication(w http.ResponseWriter, r *http.Request) {
+	userID, err := authentication.ExtractUserID(r)
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	parameters := mux.Vars(r)
+	pubID, err := strconv.ParseUint(parameters["pubID"], 10, 64)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewRepositoryPublication(db)
+	pubSavedInDatabase, err := repository.GetById(pubID)
+	if err != nil {
+		responses.Error(w, http.StatusNotFound, err)
+		return
+	}
+
+	if pubSavedInDatabase.AuthorID != userID {
+		responses.Error(w, http.StatusForbidden, errors.New("esta publicação não pertence a você"))
+		return
+	}
+	fmt.Println("chegou aqui")
+
+	if err := repository.DeleteById(pubID); err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
+
+}
