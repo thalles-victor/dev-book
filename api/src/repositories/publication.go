@@ -182,3 +182,15 @@ func (repository Publications) Like(pubID uint64) error {
 
 	return nil
 }
+
+func (repository Publications) Unlike(pubID uint64) error {
+	statement, err := repository.db.Prepare("UPDATE publication SET likes = likes - 1 WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	statement.Exec(pubID)
+
+	return nil
+}
