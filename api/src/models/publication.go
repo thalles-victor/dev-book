@@ -8,12 +8,12 @@ import (
 
 // Represent a publication maked from user
 type Publication struct {
-	ID         uint64    `json:"id,omitempty"`
+	ID         uint64    `json:"id"`
 	Title      string    `json:"title,omitempty"`
 	Content    string    `json:"content,omitempty"`
 	AuthorID   uint64    `json:"authorId,omitempty"`
 	AuthorNick string    `json:"authorNick,omitempty"`
-	Likes      uint64    `json:"likes,omitempty"`
+	Likes      uint64    `json:"likes"`
 	CreatedAt  time.Time `json:"createdAt,omitempty"`
 }
 

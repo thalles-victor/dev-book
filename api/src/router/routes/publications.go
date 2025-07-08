@@ -33,4 +33,18 @@ var routesPublications = []Rote{
 		Function:    controllers.DeletePublication,
 		RequireAuth: true,
 	},
+
+	{
+		URI:         "/users/{userID}/publications",
+		Method:      http.MethodGet,
+		Function:    controllers.SearchPubsByUsers,
+		RequireAuth: true,
+	},
+
+	{
+		URI:         "/publications/{pubID}/like",
+		Method:      http.MethodPost,
+		Function:    controllers.Like,
+		RequireAuth: true,
+	},
 }

@@ -135,3 +135,50 @@ func (repository Publications) DeleteById(pubID uint64) error {
 
 	return nil
 }
+
+func (repository Publications) SearchByUserID(userID uint64) ([]models.Publication, error) {
+	rows, err := repository.db.Query(`
+	  SELECT p.* FROM publications p
+	  JOIN users u ON u.id = p.author_id
+	  WHERE p.author_id = ?
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var publications []models.Publication
+
+	for rows.Next() {
+		var publication models.Publication
+
+		if err = rows.Scan(
+			&publication.ID,
+			&publication.Title,
+			&publication.Content,
+			&publication.AuthorID,
+			&publication.Likes,
+			&publication.CreatedAt,
+			&publication.AuthorNick,
+		); err != nil {
+			return nil, err
+		}
+
+		publications = append(publications, publication)
+	}
+
+	return publications, nil
+}
+
+// Curtir add a linke in a publication
+func (repository Publications) Like(pubID uint64) error {
+	statement, err := repository.db.Prepare("UPDATE publication SET likes = likes + 1 WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	statement.Exec(pubID)
+
+	return nil
+}

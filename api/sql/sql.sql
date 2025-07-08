@@ -39,6 +39,10 @@ INSERT INTO publication(title, content, author_id) VALUES
 ("pub from user 1", "description...", 7),
 ("pub from user 2", "description...", 8),
 ("pub from user 3", "description...", 9),
+("pub from user 4", "description...", 10),
+("pub from user 1", "description...", 7),
+("pub from user 2", "description...", 8),
+("pub from user 3", "description...", 9),
 ("pub from user 4", "description...", 10);
 
 select p.* from publication p inner join users u on u.id = p.author_id inner join subscriptions s on p.author_id = s.user_id where u.id = 10 or s.follower_id = 10;
